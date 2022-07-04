@@ -100,7 +100,7 @@ void proccess_img_ResNet(cv::Mat img, float* data, int in_H, int in_W)
 	cv::Mat imgDst;
 	cv::resize(img, imgDst, cv::Size(in_W, in_H), cv::INTER_CUBIC);
 	
-	//ÏÈ¶şÖµ»¯£¬ÔÙ¹éÒ»»¯ ---> ¼õ¾ùÖµ£¬³ıÒÔ±ê×¼²î
+	//å…ˆäºŒå€¼åŒ–ï¼Œå†å½’ä¸€åŒ– ---> å‡å‡å€¼ï¼Œé™¤ä»¥æ ‡å‡†å·®
 	int i = 0;
 	for (int row = 0; row < in_H; ++row)
 	{
@@ -245,40 +245,9 @@ extern"C"
 		ofstream trtError;
 		trtError.open(Dir);
 		trtError.close();
-
-		
 		string root_path = file_path;		
 
-		if (model_select == 0)
-		{
-			
-			fstream in(root_path + "\\encode.txt");
-			string s;
-			if (in.fail())
-			{
-				cout << "open file error" << endl;
-			}
-
-			while (std::getline(in, s), '\n')
-			{
-				string str = UTF8ToGB(s.c_str()).c_str();
-
-				if (startsWith(str, "image_H_W"))
-				{
-					std::vector<string> res = split(str, ":");
-					std::vector<string> res1 = split(res[1], ",");
-					INPUT_h = stoi(res1[0]);
-					INPUT_w = stoi(res1[1]);
-				}
-				else if (startsWith(str, "END"))
-				{
-					break;
-				}
-			}
-			in.close(); 
-		}
-
-		else if (model_select == 1)
+		if (model_select == 1)
 		{
 
 			fstream in(root_path + "\\encode_R.txt");
@@ -308,7 +277,6 @@ extern"C"
 
 		sEng[cam_cls][cam_thread] = convert_bin(root_path, model_select, cudaSetPrecision);
 		
-		//Éú³Éengine
 		struct_cam[cam_cls][cam_thread].engine = sEng[cam_cls][cam_thread].eng;
 		struct_cam[cam_cls][cam_thread].runtime= createInferRuntime(gLogger);
 		struct_cam[cam_cls][cam_thread].context = struct_cam[cam_cls][cam_thread].engine->createExecutionContext();
@@ -359,7 +327,7 @@ extern"C"
 				cv::imwrite("D:\\NewVision\\Log\\trt_Log\\error_img.bmp", uchar2Mat[camera_num][thread_num]);
 					
 				ofs.open("D:\\NewVision\\Log\\trt_Log\\process_img_Error.txt", ios::app);
-				ofs << ctime(&now) << ":  ½ÓÊÕµ½µÄÍ¼Æ¬²»ÍêÕû\n" << "Error: engine2dll.dll in line 741: uchar2Mat = cv::Mat(height_1, width_1, CV_8UC3, (uchar*)img1);" << endl;
+				ofs << ctime(&now) << ":  æ¥æ”¶åˆ°çš„å›¾ç‰‡ä¸å®Œæ•´\n" << "Error: engine2dll.dll in line 741: uchar2Mat = cv::Mat(height_1, width_1, CV_8UC3, (uchar*)img1);" << endl;
 					
 				ofs.close();
 				//string throw_out = "Error: engine2dll.dll in line 802: uchar2Mat = cv::Mat(height_1, width_1, CV_8UC3, (uchar*)img1);";
